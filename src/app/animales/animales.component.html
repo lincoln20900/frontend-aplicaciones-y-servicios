@@ -1,82 +1,72 @@
-<div class="panel-header panel-header-sm"></div>
-
 <div class="content">
   <div class="container-fluid">
-    <div class="row mb-3">
-      <div class="col-md-12 d-flex justify-content-between align-items-center">
-        <h4 class="card-title mb-0">Gestión de Animales</h4>
-        <!-- Botón para abrir modal de creación -->
-        <button class="btn btn-primary" (click)="abrirModal()">Crear Animal</button>
-      </div>
-    </div>
+    <div class="row">
+      <div class="col-md-12">
+        <div class="card">
+          <div class="card-header">
+            <h5 class="card-title">Listado de Mascotas</h5>
+            <button class="btn btn-primary" (click)="abrirModal()">
+              <i class="now-ui-icons ui-1_simple-add"></i> Nuevo Animal
+            </button>
+          </div>
+          <div class="card-body">
+            <!-- Indicador de carga -->
+            <div *ngIf="loading" class="alert alert-info">
+              <p>Cargando datos...</p>
+            </div>
 
-    <!--Buscar por ID de propietario -->
-<div class="row mb-3">
-  <div class="col-md-5">
-    <div class="d-flex align-items-center gap-2">
-      <input
-        type="text"
-        #propietarioIdInput
-        class="form-control form-control-sm"
-        placeholder="ID del propietario"
-      />
-      <button
-        class="btn btn-info btn-sm text-white"
-        (click)="buscarAnimalesPorPropietario(propietarioIdInput.value)"
-      >
-        <i class="bi bi-search"></i> Buscar
-      </button>
-    </div>
-  </div>
-</div>
+            <!-- Mensaje de error -->
+            <div *ngIf="error" class="alert alert-danger">
+              {{ error }}
+            </div>
 
-    <div class="card">
-      <div class="card-header">
-        <h5 class="title">Listado de Animales</h5>
-      </div>
-      <div class="card-body table-responsive">
-        <table class="table table-hover">
-          <thead class="text-primary">
-            <tr>
-              <th>Nombre</th>
-              <th>Edad</th>
-              <th>ID Usuario</th>
-              <th>ID Animal</th>
-              <th>ID Género</th>
-              <th>ID Raza</th>
-              <th>Fecha Creación</th>
-              <th>Fecha Edición</th>
-              <th>Acciones</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let animal of animales">
-              <td>{{ animal.nombre_animal }}</td>
-              <td>{{ animal.edad_animal }}</td>
-              <td>{{ animal.id_usuario }}</td>
-              <td>{{ animal.id_animal }}</td>
-              <td>{{ animal.id_genero }}</td>
-              <td>{{ razasMap[animal.id_raza] }}</td>
-              <td>{{ animal.fecha_creacion | date: 'short' }}</td>
-              <td>{{ animal.fecha_edicion | date: 'short' }}</td>
-              <td>
-                <button class="btn btn-warning btn-sm me-2" (click)="editarAnimal(animal)">
-                  <i class="bi bi-pencil-square"></i> Editar
-                </button>
-                <button class="btn btn-danger btn-sm" (click)="eliminarAnimal(animal.id_animal)">
-                  <i class="bi bi-trash"></i> Eliminar
-                </button>
-              </td>
-            </tr>
-          </tbody>
-        </table>
+            <!-- Tabla de mascotas -->
+            <div *ngIf="!loading && animales.length > 0" class="table-responsive">
+              <table class="table table-striped table-hover">
+                <thead>
+                  <tr>
+                    <th>ID Animal</th>
+                    <th>Nombre</th>
+                    <th>Edad</th>
+                    <th>Género</th>
+                    <th>Raza</th>
+                    <th>Propietario</th>
+                    <th>Acciones</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let animal of animales">
+                    <td>{{ animal.id }}</td>
+                    <td>{{ animal.nombre }}</td>
+                    <td>{{ animal.edad || 'N/A' }}</td>
+                    <td>{{ animal.genero_id || 'N/A' }}</td>
+                    <td>{{ animal.raza_id || 'N/A' }}</td>
+                    <td>{{ animal.usuario_id || 'N/A' }}</td>
+                    <td>
+                      <button class="btn btn-sm btn-warning" (click)="editarAnimal(animal)">
+                        <i class="now-ui-icons ui-2_settings-90"></i>
+                      </button>
+                      <button class="btn btn-sm btn-danger" (click)="eliminarAnimal(animal.id)">
+                        <i class="now-ui-icons ui-1_simple-remove"></i>
+                      </button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <!-- Mensaje cuando no hay mascotas -->
+            <div *ngIf="!loading && animales.length === 0 && !error" class="alert alert-warning">
+              No hay mascotas para mostrar
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
 </div>
 
-<!-- Modal CREAR ANIMAL -->
-<div class="modal fade" #crearAnimalModal tabindex="-1" aria-labelledby="crearAnimalModalLabel" aria-hidden="true">
+<div class="modal fade" #crearAnimalModal id="crearAnimalModal" tabindex="-1" aria-labelledby="crearAnimalModalLabel" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
@@ -87,27 +77,23 @@
         <form>
           <div class="mb-3">
             <label>Nombre</label>
-            <input type="text" class="form-control" [(ngModel)]="nuevoAnimal.nombre_animal" name="nombre_animal">
+            <input type="text" class="form-control" [(ngModel)]="nuevoAnimal.nombre" name="nombre">
           </div>
           <div class="mb-3">
             <label>Edad</label>
-            <input type="text" class="form-control" [(ngModel)]="nuevoAnimal.edad_animal" name="edad_animal">
+            <input type="text" class="form-control" [(ngModel)]="nuevoAnimal.edad" name="edad">
           </div>
           <div class="mb-3">
             <label>ID Género</label>
-            <input type="text" class="form-control" [(ngModel)]="nuevoAnimal.id_genero" name="id_genero">
+            <input type="text" class="form-control" [(ngModel)]="nuevoAnimal.genero_id" name="genero_id">
           </div>
           <div class="mb-3">
             <label>ID Raza</label>
-            <input type="text" class="form-control" [(ngModel)]="nuevoAnimal.id_raza" name="id_raza">
+            <input type="text" class="form-control" [(ngModel)]="nuevoAnimal.raza_id" name="raza_id">
           </div>
           <div class="mb-3">
             <label>ID Usuario</label>
-            <input type="text" class="form-control" [(ngModel)]="nuevoAnimal.id_usuario" name="id_usuario">
-          </div>
-          <div class="mb-3">
-            <label>ID Usuario Crea</label>
-            <input type="text" class="form-control" [(ngModel)]="nuevoAnimal.id_usuario_crea" name="id_usuario_crea">
+            <input type="text" class="form-control" [(ngModel)]="nuevoAnimal.usuario_id" name="usuario_id">
           </div>
         </form>
       </div>
@@ -132,27 +118,27 @@
         <form>
           <div class="mb-3">
             <label>ID Animal</label>
-            <input type="text" class="form-control" [(ngModel)]="animalForm.id_animal" name="id_animal" readonly>
+            <input type="text" class="form-control" [(ngModel)]="animalForm.id" name="id" readonly>
           </div>
           <div class="mb-3">
             <label>Nombre del Animal</label>
-            <input type="text" class="form-control" [(ngModel)]="animalForm.nombre_animal" name="nombre_animal">
+            <input type="text" class="form-control" [(ngModel)]="animalForm.nombre" name="nombre">
           </div>
           <div class="mb-3">
             <label>Edad</label>
-            <input type="text" class="form-control" [(ngModel)]="animalForm.edad_animal" name="edad_animal">
+            <input type="text" class="form-control" [(ngModel)]="animalForm.edad" name="edad">
           </div>
           <div class="mb-3">
             <label>ID Género</label>
-            <input type="text" class="form-control" [(ngModel)]="animalForm.id_genero" name="id_genero">
+            <input type="text" class="form-control" [(ngModel)]="animalForm.genero_id" name="genero_id">
           </div>
           <div class="mb-3">
             <label>ID Raza</label>
-            <input type="text" class="form-control" [(ngModel)]="animalForm.id_raza" name="id_raza">
+            <input type="text" class="form-control" [(ngModel)]="animalForm.raza_id" name="raza_id">
           </div>
           <div class="mb-3">
-            <label>ID Usuario que Edita</label>
-            <input type="text" class="form-control" [(ngModel)]="animalForm.id_usuario_edita" name="id_usuario_edita">
+            <label>ID Usuario</label>
+            <input type="text" class="form-control" [(ngModel)]="animalForm.usuario_id" name="usuario_id">
           </div>
         </form>
       </div>

@@ -4,7 +4,7 @@
       <div class="col-md-12">
         <div class="card">
           <div class="card-header">
-            <h5 class="card-title">Listado de Usuarios</h5>
+            <h5 class="card-title">Listado de Sedes</h5>
           </div>
           <div class="card-body">
             <!-- Indicador de carga -->
@@ -17,29 +17,31 @@
               {{ error }}
             </div>
 
-            <!-- Tabla de usuarios -->
-            <div *ngIf="!loading && usuarios.length > 0" class="table-responsive">
+            <!-- Tabla de sedes -->
+            <div *ngIf="!loading && sedes.length > 0" class="table-responsive">
               <table class="table table-striped table-hover">
                 <thead>
                   <tr>
                     <th>ID</th>
-                    <th>Email</th>
-                    <th>Rol</th>
+                    <th>Nombre</th>
+                    <th>Teléfono</th>
+                    <th>Dirección</th>
                   </tr>
                 </thead>
                 <tbody>
-                  <tr *ngFor="let usuario of usuarios">
-                    <td>{{ usuario.id }}</td>
-                    <td>{{ usuario.email }}</td>
-                    <td>{{ usuario.rol }}</td>
+                  <tr *ngFor="let sede of sedes">
+                    <td>{{ sede.id }}</td>
+                    <td>{{ sede.nombre }}</td>
+                    <td>{{ sede.telefono }}</td>
+                    <td>{{ sede.direccion }}</td>
                   </tr>
                 </tbody>
               </table>
             </div>
 
-            <!-- Mensaje cuando no hay usuarios -->
-            <div *ngIf="!loading && usuarios.length === 0 && !error" class="alert alert-warning">
-              No hay usuarios para mostrar
+            <!-- Mensaje cuando no hay sedes -->
+            <div *ngIf="!loading && sedes.length === 0 && !error" class="alert alert-warning">
+              No hay sedes para mostrar
             </div>
           </div>
         </div>
@@ -47,6 +49,3 @@
     </div>
   </div>
 </div>
-
-
-

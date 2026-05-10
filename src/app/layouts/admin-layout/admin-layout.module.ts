@@ -9,6 +9,10 @@ import { UsuariosComponent } from '../../usuarios/usuarios.component';
 import { AnimalesComponent } from '../../animales/animales.component';
 import { CitasComponent } from '../../citas/citas.component';
 import { FacturaComponent } from '../../factura/factura.component';
+import { ClientesComponent } from '../../clientes/clientes.component';
+import { SedeComponent } from '../../sede/sede.component';
+import { VacunaComponent } from '../../vacuna/vacuna.component';
+import { VeterinarioComponent } from '../../veterinario/veterinario.component';
 import { ChartsModule } from 'ng2-charts';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { ToastrModule } from 'ngx-toastr';
@@ -29,7 +33,11 @@ import { ToastrModule } from 'ngx-toastr';
     UsuariosComponent,
     AnimalesComponent,
     CitasComponent,
-    FacturaComponent
+    FacturaComponent,
+    ClientesComponent,
+    SedeComponent,
+    VacunaComponent,
+    VeterinarioComponent
   ]
 })
 

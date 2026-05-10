@@ -1,55 +1,79 @@
-/* ======== ENCABEZADO GENERAL ======== */
-.card-title {
-  font-weight: 600;
-  color: #2c3e50;
-}
+.card {
+  margin-bottom: 20px;
+  
+  .card-header {
+    background-color: #f4f3ef;
+    border-bottom: 1px solid #e3e3e3;
+    padding: 15px 20px;
+    
+    .card-title {
+      margin: 0;
+      font-size: 18px;
+      font-weight: 600;
+      color: #333;
+    }
+  }
 
-/* ======== TABLA ======== */
-.table {
-  border-collapse: separate;
-  border-spacing: 0 8px;
-}
+  .card-body {
+    padding: 20px;
 
-.table thead th {
-  font-weight: 600;
-  text-transform: uppercase;
-  font-size: 0.8rem;
-  color: #344675;
-  border: none;
-  background-color: #f7f8fa;
-}
+    .alert {
+      margin-bottom: 20px;
+      border-radius: 4px;
+    }
 
-.table tbody tr {
-  transition: all 0.2s ease-in-out;
-  background-color: #fff;
-  box-shadow: 0 0 0 rgba(0, 0, 0, 0);
-}
+    .table-responsive {
+      margin-bottom: 0;
 
-.table tbody tr:hover {
-  background-color: #f1f3f6;
-  transform: scale(1.01);
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
-}
+      .table {
+        margin-bottom: 0;
+        font-size: 14px;
 
-.thin-input {
-  height: 32px;
-  padding: 4px 8px;
-  font-size: 14px;
-}
+        thead {
+          background-color: #f9f9f9;
 
-.thin-btn {
-  height: 32px;
-  padding: 4px 12px;
-  font-size: 14px;
-  line-height: 1;
-}
+          th {
+            border-bottom: 2px solid #dee2e6;
+            font-weight: 600;
+            color: #333;
+            padding: 12px;
+            text-align: left;
+          }
+        }
 
-.table td {
-  padding: 0.75rem;
-  vertical-align: middle;
-  border-top: 1px solid #e9ecef;
-  font-size: 0.9rem;
-  color: #555;
+        tbody {
+          tr {
+            &:hover {
+              background-color: #f5f5f5;
+            }
+
+            td {
+              padding: 12px;
+              border-bottom: 1px solid #dee2e6;
+              vertical-align: middle;
+            }
+          }
+        }
+      }
+    }
+
+    .badge {
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 12px;
+      font-weight: 500;
+
+      &.badge-success {
+        background-color: #28a745;
+        color: white;
+      }
+
+      &.badge-danger {
+        background-color: #dc3545;
+        color: white;
+      }
+    }
+  }
 }
 
 /* ======== TARJETAS ======== */

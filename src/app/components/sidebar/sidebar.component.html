@@ -14,7 +14,13 @@
         <li routerLinkActive="active" *ngFor="let menuItem of menuItems" class="{{menuItem.class}} nav-item">
             <a [routerLink]="[menuItem.path]">
                 <i class="now-ui-icons {{menuItem.icon}}"></i>
-                <p>{{menuItem.title}}</p>
+                <p>
+                    {{menuItem.title}}
+                    <span *ngIf="menuItem.showCount !== false && menuItem.count !== undefined && menuItem.count > 0" class="badge badge-success" style="margin-left: 5px;">
+                        {{menuItem.count}}
+                    </span>
+                    <span *ngIf="menuItem.loading" class="spinner-border spinner-border-sm" style="margin-left: 5px;"></span>
+                </p>
             </a>
         </li>
     </ul>

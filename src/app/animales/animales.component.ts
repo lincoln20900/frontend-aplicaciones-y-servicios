@@ -1,7 +1,10 @@
+import { Component, OnInit, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import Swal from 'sweetalert2';
 import { environment } from '../../environments/environment';
-const apiUrl = environment.apiUrl + '/animales';
+import { MascotaRead } from '../models/api.models';
+
+const apiUrl = environment.apiUrl + '/mascotas';
 declare const bootstrap: any;
 
 @Component({
@@ -9,92 +12,57 @@ declare const bootstrap: any;
   templateUrl: './animales.component.html',
   styleUrls: ['./animales.component.scss']
 })
-export class AnimalesComponent implements OnInit {
+export class AnimalesComponent implements OnInit, AfterViewInit {
 
-  animales: any[] = [];
+  animales: MascotaRead[] = [];
   loading: boolean = false;
   error: string | null = null;
-  //para razas
-  razas: any[] = [];
-  razasMap: { [id: string]: string } = {};
-
-  // Formulario del nuevo animal
-  nuevoAnimal = {
-    nombre_animal: '',
-    edad_animal: '',
-    id_genero: '',
-    id_raza: '',
-    id_usuario: '',
-    id_usuario_crea: ''
-  };
-
-  // Referencias a los modales
-  @ViewChild('crearAnimalModal') crearAnimalModal!: ElementRef;
-  @ViewChild('editarAnimalModal') editarAnimalModal!: ElementRef;
-
+  
+  // Modal instances
   modalCrearInstance: any;
   modalEditarInstance: any;
 
-  constructor(private http: HttpClient) {}
+  @ViewChild('crearAnimalModal') crearAnimalModal: ElementRef;
+  @ViewChild('editarAnimalModal') editarAnimalModal: ElementRef;
+  
+  // Nuevo animal form
+  nuevoAnimal: any = {
+    nombre: '',
+    edad: '',
+    genero_id: '',
+    raza_id: '',
+    usuario_id: ''
+  };
+
+  constructor(private http: HttpClient) { }
 
   ngOnInit(): void {
     this.obtenerAnimales();
-    this.cargarRazas(); // si ya lo tienes, aquí mapeas las razas
   }
 
   ngAfterViewInit(): void {
-    // Inicializar ambos modales de Bootstrap
     this.modalCrearInstance = new bootstrap.Modal(this.crearAnimalModal.nativeElement);
     this.modalEditarInstance = new bootstrap.Modal(this.editarAnimalModal.nativeElement);
   }
-
-  /** -------------------------
-   *  CRUD BÁSICO
-   * ------------------------- */
-  cargarRazas(): void {
-    const urlCandidates = [
-      `${environment.apiUrl}/razas-animal`
-    ];
- 
-    // Intentamos varias rutas comunes hasta que una responda
-    const tryNext = (index: number) => {
-      if (index >= urlCandidates.length) return;
-      const url = urlCandidates[index];
-      this.http.get<any[]>(url).subscribe({
-        next: (data) => {
-          // Normalizar estructura: buscar campos evidentes
-          this.razas = data || [];
-          this.razasMap = {};
-          this.razas.forEach(r => {
-            const id = r.id_raza || r.id || r._id || r.id_raza_animal;
-            const nombre = r.nombre_raza || r.nombre || r.nombreRaza || r.raza || '';
-            if (id) this.razasMap[id] = nombre || id;
-          });
-        },
-        error: () => {
-          // Intentar siguiente URL
-          tryNext(index + 1);
-        }
-      });
-    };
- 
-    tryNext(0);
-  }
- 
- 
 
   obtenerAnimales(): void {
     this.loading = true;
     this.error = null;
 
-    this.http.get<any[]>(apiUrl).subscribe({
+    this.http.get<MascotaRead[]>(apiUrl).subscribe({
       next: (data) => {
         this.animales = data;
         this.loading = false;
       },
-      error: () => {
-        this.error = 'No se pudieron cargar los animales. Verifica la conexión con la API.';
+      error: (err) => {
+        console.error('Error al obtener mascotas:', err);
+        this.error = 'No se pudieron cargar las mascotas';
         this.loading = false;
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: 'No se pudieron cargar las mascotas'
+        });
       }
     });
   }
@@ -117,12 +85,11 @@ export class AnimalesComponent implements OnInit {
         this.animales.push(res);
         this.cerrarModal();
         this.nuevoAnimal = {
-          nombre_animal: '',
-          edad_animal: '',
-          id_genero: '',
-          id_raza: '',
-          id_usuario: '',
-          id_usuario_crea: ''
+          nombre: '',
+          edad: '',
+          genero_id: '',
+          raza_id: '',
+          usuario_id: ''
         };
       },
       error: () => {
@@ -132,7 +99,7 @@ export class AnimalesComponent implements OnInit {
   }
 
   /** Eliminar Animal */
-  eliminarAnimal(id_animal: string): void {
+  eliminarAnimal(id_animal: number | string): void {
     if (!confirm('¿Seguro que deseas eliminar este animal?')) return;
 
     const url = `${apiUrl}/${id_animal}`;
@@ -162,54 +129,50 @@ export class AnimalesComponent implements OnInit {
    * ------------------------- */
   modoEdicion: boolean = false;
   animalForm: any = { 
-    nombre_animal:'', 
-    edad_animal:'', 
-    id_genero:'', 
-    id_raza:'', 
-    id_usuario:'', 
-    id_usuario_edita:'', 
-    id_animal:'' 
+    id: '',
+    nombre: '', 
+    edad: '', 
+    genero_id: '', 
+    raza_id: '', 
+    usuario_id: '' 
   };
 
   // Abrir modal de edición
   editarAnimal(animal: any): void {
     this.modoEdicion = true;
     this.animalForm = {
-      nombre_animal: animal.nombre_animal,
-      edad_animal: animal.edad_animal,
-      id_genero: animal.id_genero,
-      id_raza: animal.id_raza,
-      id_usuario_edita: '', // usuario que edita se ingresa manualmente
-      id_animal: animal.id_animal
+      id: animal.id,
+      nombre: animal.nombre,
+      edad: animal.edad,
+      genero_id: animal.genero_id,
+      raza_id: animal.raza_id,
+      usuario_id: animal.usuario_id
     };
     this.modalEditarInstance.show();
   }
   // Guardar cambios del animal editado
   guardarCambios(): void {
-    const url = `${apiUrl}/${this.animalForm.id_animal}?id_usuario_edita=${this.animalForm.id_usuario_edita}`; //la petición requería el query usuario que edita no en el body sino en la url, así lo diga en el request body
+    const url = `${apiUrl}/${this.animalForm.id}`;
     const payload = {
-      nombre_animal: this.animalForm.nombre_animal,
-      edad_animal: this.animalForm.edad_animal,
-      id_genero: this.animalForm.id_genero,
-      id_raza: this.animalForm.id_raza
+      nombre: this.animalForm.nombre,
+      edad: this.animalForm.edad,
+      genero_id: this.animalForm.genero_id,
+      raza_id: this.animalForm.raza_id,
+      usuario_id: this.animalForm.usuario_id
     };
-    
-      console.log('📦 Payload que se enviará:', payload); 
+
+    console.log('📦 Payload que se enviará:', payload); 
 
     this.http.put<any>(url, payload).subscribe({
       next: (response) => {
-        if (response.exito) {
-          alert('Animal actualizado correctamente.');
-          this.obtenerAnimales();
-          this.cerrarModal();
-          this.modoEdicion = false;
-        } else {
-          alert(`No se pudo actualizar: ${response.mensaje}`);
-        }
+        this.obtenerAnimales();
+        this.cerrarModal();
+        this.modoEdicion = false;
+        Swal.fire('Éxito', 'Animal actualizado correctamente', 'success');
       },
       error: (err) => {
         console.error('Error al editar animal:', err);
-        alert('Error al editar el animal.');
+        Swal.fire('Error', 'Error al editar el animal.', 'error');
       }
     });
   }
@@ -241,4 +204,3 @@ export class AnimalesComponent implements OnInit {
 
 
 }
-

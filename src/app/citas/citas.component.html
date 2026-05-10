@@ -1,82 +1,63 @@
-<div class="panel-header panel-header-sm"></div>
-
 <div class="content">
   <div class="container-fluid">
-    <div class="row mb-3">
-      <div class="col-md-12 d-flex justify-content-between align-items-center">
-        <h4 class="card-title mb-0">Gestión de Citas</h4>
-        <button class="btn btn-primary" (click)="abrirModalCrear()">Crear Cita</button>
-      </div>
-    </div>
+    <div class="row">
+      <div class="col-md-12">
+        <div class="card">
+          <div class="card-header">
+            <h5 class="card-title">Listado de Citas de Vacunación</h5>
+            <button class="btn btn-primary" (click)="abrirModal()">
+              <i class="now-ui-icons ui-1_simple-add"></i> Nueva Cita
+            </button>
+          </div>
+          <div class="card-body">
+            <!-- Indicador de carga -->
+            <div *ngIf="loading" class="alert alert-info">
+              <p>Cargando datos...</p>
+            </div>
 
-    <!-- Buscar por ID de animal -->
-    <div class="row mb-3">
-      <div class="col-md-5">
-        <div class="d-flex align-items-center gap-2">
-          <input
-            type="text"
-            #animalIdInput
-            class="form-control form-control-sm"
-            placeholder="ID del animal"
-          />
-          <button
-            class="btn btn-info btn-sm text-white"
-            (click)="buscarCitasPorAnimal(animalIdInput.value)"
-          >
-            <i class="bi bi-search"></i> Buscar
-          </button>
-          <button class="btn btn-secondary btn-sm" (click)="obtenerCitas()">Limpiar</button>
+            <!-- Mensaje de error -->
+            <div *ngIf="error" class="alert alert-danger">
+              {{ error }}
+            </div>
+
+            <!-- Tabla de citas -->
+            <div *ngIf="!loading && citas.length > 0" class="table-responsive">
+              <table class="table table-striped table-hover">
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Fecha</th>
+                    <th>Estado</th>
+                    <th>ID Mascota</th>
+                    <th>ID Vacuna</th>
+                    <th>ID Veterinario</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let cita of citas">
+                    <td>{{ cita.id }}</td>
+                    <td>{{ cita.fecha ? (cita.fecha | date: 'short') : 'N/A' }}</td>
+                    <td>{{ cita.estado || 'N/A' }}</td>
+                    <td>{{ cita.mascota_id || 'N/A' }}</td>
+                    <td>{{ cita.vacuna_id || 'N/A' }}</td>
+                    <td>{{ cita.veterinario_id || 'N/A' }}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <!-- Mensaje cuando no hay citas -->
+            <div *ngIf="!loading && citas.length === 0 && !error" class="alert alert-warning">
+              No hay citas para mostrar
+            </div>
+          </div>
         </div>
-      </div>
-    </div>
-
-    <div class="card">
-      <div class="card-header">
-        <h5 class="title">Listado de Citas</h5>
-      </div>
-      <div class="card-body table-responsive">
-        <table class="table table-hover">
-          <thead class="text-primary">
-            <tr>
-              <th>ID Cita</th>
-              <th>ID Servicio</th>
-              <th>ID Animal</th>
-              <th>Fecha Atención</th>
-              <th>Fecha Asignación</th>
-              <th>Acciones</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let cita of citas">
-              <td>{{ cita.id_citas }}</td>
-              <td>{{ cita.id_servicio }}</td>
-              <td>{{ cita.id_animal }}</td>
-              <td>{{ cita.fecha_atencion | date: 'short' }}</td>
-              <td>{{ cita.fecha_asignacion | date: 'short' }}</td>
-              <td>
-                <button class="btn btn-warning btn-sm me-2" (click)="editarCita(cita)">
-                  <i class="bi bi-pencil-square"></i> Editar
-                </button>
-                <button class="btn btn-danger btn-sm" (click)="eliminarCita(cita.id_citas)">
-                  <i class="bi bi-trash"></i> Eliminar
-                </button>
-              </td>
-            </tr>
-
-            <tr *ngIf="!citas.length && !loading">
-              <td class="text-muted" colspan="6">No hay citas disponibles.</td>
-            </tr>
-          </tbody>
-        </table>
-        <div *ngIf="loading" class="mt-2">Cargando...</div>
-        <div *ngIf="error" class="text-danger mt-2">{{ error }}</div>
       </div>
     </div>
   </div>
 </div>
 
-<!-- Modal CREAR CITA -->
-<div class="modal fade" #crearCitaModal tabindex="-1" aria-labelledby="crearCitaModalLabel" aria-hidden="true">
+<div class="modal fade" #crearCitaModal id="crearCitaModal" tabindex="-1" aria-labelledby="crearCitaModalLabel" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
       
@@ -88,51 +69,51 @@
       <div class="modal-body">
         <form>
 
-          <!-- ID Servicio -->
+          <!-- ID Mascota -->
           <div class="mb-3">
-            <label for="id_servicio">ID Servicio</label>
+            <label for="mascota_id">ID Mascota</label>
             <input 
               type="text" 
-              id="id_servicio"
+              id="mascota_id"
               class="form-control"
-              [(ngModel)]="nuevaCita.id_servicio" 
-              name="id_servicio"
+              [(ngModel)]="nuevaCita.mascota_id" 
+              name="mascota_id"
             >
           </div>
 
-          <!-- ID Animal -->
+          <!-- ID Vacuna -->
           <div class="mb-3">
-            <label for="id_animal">ID Animal</label>
+            <label for="vacuna_id">ID Vacuna</label>
             <input 
               type="text" 
-              id="id_animal"
+              id="vacuna_id"
               class="form-control"
-              [(ngModel)]="nuevaCita.id_animal" 
-              name="id_animal"
+              [(ngModel)]="nuevaCita.vacuna_id" 
+              name="vacuna_id"
             >
           </div>
 
-          <!-- Fecha Atención -->
+          <!-- ID Veterinario -->
           <div class="mb-3">
-            <label for="fecha_atencion">Fecha Atención</label>
+            <label for="veterinario_id">ID Veterinario</label>
+            <input 
+              type="text" 
+              id="veterinario_id"
+              class="form-control"
+              [(ngModel)]="nuevaCita.veterinario_id" 
+              name="veterinario_id"
+            >
+          </div>
+
+          <!-- Fecha -->
+          <div class="mb-3">
+            <label for="fecha">Fecha Cita</label>
             <input 
               type="datetime-local"
-              id="fecha_atencion"
+              id="fecha"
               class="form-control"
-              [(ngModel)]="nuevaCita.fecha_atencion" 
-              name="fecha_atencion"
-            >
-          </div>
-
-          <!-- ID Usuario Crea -->
-          <div class="mb-3">
-            <label for="id_usuario_crea">ID Usuario Crea</label>
-            <input 
-              type="text" 
-              id="id_usuario_crea"
-              class="form-control"
-              [(ngModel)]="nuevaCita.id_usuario_crea" 
-              name="id_usuario_crea"
+              [(ngModel)]="nuevaCita.fecha" 
+              name="fecha"
             >
           </div>
 
@@ -229,4 +210,3 @@
     </div>
   </div>
 </div>
-

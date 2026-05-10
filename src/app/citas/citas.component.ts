@@ -1,6 +1,8 @@
-import { Component, ElementRef, ViewChild, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import Swal from 'sweetalert2';
 import { environment } from '../../environments/environment';
+import { CitaVacunacionRead } from '../models/api.models';
 
 const apiUrl = environment.apiUrl + '/citas';
 declare const bootstrap: any;
@@ -10,138 +12,111 @@ declare const bootstrap: any;
   templateUrl: './citas.component.html',
   styleUrls: ['./citas.component.scss']
 })
-export class CitasComponent implements OnInit {
+export class CitasComponent implements OnInit, AfterViewInit {
 
-  citas: any[] = [];
-  loading = false;
+  citas: CitaVacunacionRead[] = [];
+  loading: boolean = false;
   error: string | null = null;
 
-  // FORM CREAR
-  nuevaCita = {
-    id_servicio: '',
-    id_animal: '',
-    fecha_atencion: '',
-    id_usuario_crea: ''
-  };
-
-  // FORM EDITAR
-  citaForm: any = {
-    id_citas: '',
-    id_servicio: '',
-    id_animal: '',
-    fecha_atencion: ''
-  };
-
-  @ViewChild('crearCitaModal') crearCitaModal!: ElementRef;
-  @ViewChild('editarCitaModal') editarCitaModal!: ElementRef;
-
+  // Modales
   modalCrearInstance: any;
   modalEditarInstance: any;
 
-  constructor(private http: HttpClient) {}
+  @ViewChild('crearCitaModal') crearCitaModal: ElementRef;
+  @ViewChild('editarCitaModal') editarCitaModal: ElementRef;
 
-  ngOnInit() {
+  nuevaCita: any = {
+    mascota_id: '',
+    vacuna_id: '',
+    veterinario_id: '',
+    fecha: '',
+    estado: 'programada'
+  };
+
+  citaForm: any = {
+    id: '',
+    mascota_id: '',
+    vacuna_id: '',
+    veterinario_id: '',
+    fecha: '',
+    estado: ''
+  };
+
+  constructor(private http: HttpClient) { }
+
+  ngOnInit(): void {
     this.obtenerCitas();
   }
 
-  ngAfterViewInit() {
+  ngAfterViewInit(): void {
     this.modalCrearInstance = new bootstrap.Modal(this.crearCitaModal.nativeElement);
     this.modalEditarInstance = new bootstrap.Modal(this.editarCitaModal.nativeElement);
   }
 
-  obtenerCitas() {
+  obtenerCitas(): void {
     this.loading = true;
+    this.error = null;
 
-    this.http.get<any[]>(apiUrl).subscribe({
-      next: res => { this.citas = res; this.loading = false; },
-      error: () => { this.error = 'No se pudieron cargar las citas'; this.loading = false; }
+    this.http.get<any>(apiUrl).subscribe({
+      next: (res) => {
+        this.citas = res.datos || res;
+        this.loading = false;
+      },
+      error: (err) => {
+        console.error('Error al obtener citas:', err);
+        this.error = 'No se pudieron cargar las citas';
+        this.loading = false;
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: 'No se pudieron cargar las citas'
+        });
+      }
     });
   }
 
-  abrirModalCrear() {
+  abrirModal(): void {
     this.modalCrearInstance.show();
   }
 
-  cerrarModal() {
+  cerrarModal(): void {
     if (this.modalCrearInstance) this.modalCrearInstance.hide();
     if (this.modalEditarInstance) this.modalEditarInstance.hide();
   }
 
-  crearCita() {
-  const payload = {
-    id_servicio: this.nuevaCita.id_servicio,
-    id_animal: this.nuevaCita.id_animal,
-    fecha_atencion: new Date(this.nuevaCita.fecha_atencion).toISOString(),
-    id_usuario_crea: this.nuevaCita.id_usuario_crea
-  };
-
-  this.http.post<any>(apiUrl, payload).subscribe({
-    next: (res) => {
-      this.citas.push(res);
-      this.cerrarModal();
-
-      // Reiniciar formulario
-      this.nuevaCita = { 
-        id_servicio: '', 
-        id_animal: '', 
-        fecha_atencion: '', 
-        id_usuario_crea: '' 
-      };
-    },
-    error: () => alert('Error al crear la cita')
-  });
-}
-
-
-  eliminarCita(id: string) {
-    if (!confirm('¿Eliminar cita?')) return;
-
-    this.http.delete<any>(`${apiUrl}/${id}`).subscribe({
-      next: r => { alert('Cita eliminada'); this.obtenerCitas(); },
-      error: e => alert('Error al eliminar')
+  crearCita(): void {
+    this.http.post<any>(apiUrl, this.nuevaCita).subscribe({
+      next: (res) => {
+        const citaCreada = res.datos || res;
+        this.citas.push(citaCreada);
+        this.cerrarModal();
+        this.nuevaCita = { 
+          mascota_id: '', 
+          vacuna_id: '', 
+          veterinario_id: '', 
+          fecha: '', 
+          estado: 'programada' 
+        };
+        Swal.fire('Éxito', 'Cita creada correctamente', 'success');
+      },
+      error: () => Swal.fire('Error', 'No se pudo crear la cita', 'error')
     });
   }
 
-  editarCita(c: any) {
-  this.citaForm = {
-    id_citas: c.id_citas,           // ID de la cita que estás editando
-    id_servicio: c.id_servicio,
-    id_animal: c.id_animal,
-    fecha_atencion: c.fecha_atencion,
-    id_usuario_edita: ''            // Se llenará manualmente desde el modal
-  };
+  editarCita(cita: any): void {
+    this.citaForm = { ...cita };
+    this.modalEditarInstance.show();
+  }
 
-  this.modalEditarInstance.show();
-}
-
-
-  guardarCambios() {
-  const url = `${apiUrl}/${this.citaForm.id_citas}`;
-
-  const payload = {
-    id_servicio: this.citaForm.id_servicio,
-    id_animal: this.citaForm.id_animal,
-    fecha_atencion: this.citaForm.fecha_atencion,
-    id_usuario_edita: this.citaForm.id_usuario_edita
-  };
-
-  this.http.put<any>(url, payload).subscribe({
-    next: res => {
-      alert('Cita actualizada');
-      this.obtenerCitas();
-      this.cerrarModal();
-    },
-    error: () => alert('Error al actualizar cita')
-  });
-}
-
-
-  buscarCitasPorAnimal(id_animal: string) {
-    if (!id_animal) return alert('Ingresa un ID de animal');
-
-    this.http.get<any[]>(`${apiUrl}/animal/${id_animal}`).subscribe({
-      next: res => this.citas = res,
-      error: () => alert('Error al buscar citas')
+  guardarCambios(): void {
+    const url = `${apiUrl}/${this.citaForm.id}`;
+    this.http.put<any>(url, this.citaForm).subscribe({
+      next: () => {
+        this.obtenerCitas();
+        this.cerrarModal();
+        Swal.fire('Éxito', 'Cita actualizada correctamente', 'success');
+      },
+      error: () => Swal.fire('Error', 'No se pudo actualizar la cita', 'error')
     });
   }
 }
