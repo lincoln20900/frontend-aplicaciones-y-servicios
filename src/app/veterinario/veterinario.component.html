@@ -3,8 +3,11 @@
     <div class="row">
       <div class="col-md-12">
         <div class="card">
-          <div class="card-header">
-            <h5 class="card-title">Listado de Veterinarios</h5>
+          <div class="card-header d-flex align-items-center justify-content-between">
+            <h5 class="card-title mb-0">Listado de Veterinarios</h5>
+            <button class="btn btn-primary" (click)="abrirModalCrear()">
+              <i class="now-ui-icons ui-1_simple-add"></i> Nuevo Veterinario
+            </button>
           </div>
           <div class="card-body">
             <!-- Indicador de carga -->
@@ -26,6 +29,7 @@
                     <th>Nombre</th>
                     <th>Especialidad</th>
                     <th>ID Sede</th>
+                    <th>Acciones</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -34,6 +38,14 @@
                     <td>{{ veterinario.nombre }}</td>
                     <td>{{ veterinario.especialidad }}</td>
                     <td>{{ veterinario.sede_id }}</td>
+                    <td>
+                      <button class="btn btn-sm btn-warning me-1" (click)="editarVeterinario(veterinario)">
+                        <i class="now-ui-icons ui-2_settings-90"></i>
+                      </button>
+                      <button class="btn btn-sm btn-danger" (click)="eliminarVeterinario(veterinario.id)">
+                        <i class="now-ui-icons ui-1_simple-remove"></i>
+                      </button>
+                    </td>
                   </tr>
                 </tbody>
               </table>
@@ -45,6 +57,72 @@
             </div>
           </div>
         </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" #crearVeterinarioModal tabindex="-1" aria-labelledby="crearVeterinarioModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="crearVeterinarioModalLabel">Crear Veterinario</h5>
+        <button type="button" class="btn-close" (click)="modalCrearInstance.hide()" aria-label="Cerrar"></button>
+      </div>
+      <div class="modal-body">
+        <form>
+          <div class="mb-3">
+            <label>Nombre</label>
+            <input type="text" class="form-control" [(ngModel)]="nuevaVeterinario.nombre" name="crearNombre">
+          </div>
+          <div class="mb-3">
+            <label>Especialidad</label>
+            <input type="text" class="form-control" [(ngModel)]="nuevaVeterinario.especialidad" name="crearEspecialidad">
+          </div>
+          <div class="mb-3">
+            <label>ID Sede</label>
+            <input type="number" class="form-control" [(ngModel)]="nuevaVeterinario.sede_id" name="crearSedeId">
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="modalCrearInstance.hide()">Cancelar</button>
+        <button type="button" class="btn btn-primary" (click)="crearVeterinario()">Crear</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" #editarVeterinarioModal tabindex="-1" aria-labelledby="editarVeterinarioModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header bg-warning">
+        <h5 class="modal-title" id="editarVeterinarioModalLabel">Editar Veterinario</h5>
+        <button type="button" class="btn-close" (click)="modalEditarInstance.hide()" aria-label="Cerrar"></button>
+      </div>
+      <div class="modal-body">
+        <form>
+          <div class="mb-3">
+            <label>ID</label>
+            <input type="text" class="form-control" [(ngModel)]="veterinarioForm.id" name="editarId" readonly>
+          </div>
+          <div class="mb-3">
+            <label>Nombre</label>
+            <input type="text" class="form-control" [(ngModel)]="veterinarioForm.nombre" name="editarNombre">
+          </div>
+          <div class="mb-3">
+            <label>Especialidad</label>
+            <input type="text" class="form-control" [(ngModel)]="veterinarioForm.especialidad" name="editarEspecialidad">
+          </div>
+          <div class="mb-3">
+            <label>ID Sede</label>
+            <input type="number" class="form-control" [(ngModel)]="veterinarioForm.sede_id" name="editarSedeId">
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="modalEditarInstance.hide()">Cancelar</button>
+        <button type="button" class="btn btn-warning text-white" (click)="guardarCambios()">Guardar Cambios</button>
       </div>
     </div>
   </div>

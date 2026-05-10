@@ -3,8 +3,11 @@
     <div class="row">
       <div class="col-md-12">
         <div class="card">
-          <div class="card-header">
-            <h5 class="card-title">Listado de Sedes</h5>
+          <div class="card-header d-flex align-items-center justify-content-between">
+            <h5 class="card-title mb-0">Listado de Sedes</h5>
+            <button class="btn btn-primary" (click)="abrirModalCrear()">
+              <i class="now-ui-icons ui-1_simple-add"></i> Nueva Sede
+            </button>
           </div>
           <div class="card-body">
             <!-- Indicador de carga -->
@@ -26,6 +29,7 @@
                     <th>Nombre</th>
                     <th>Teléfono</th>
                     <th>Dirección</th>
+                    <th>Acciones</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -34,6 +38,14 @@
                     <td>{{ sede.nombre }}</td>
                     <td>{{ sede.telefono }}</td>
                     <td>{{ sede.direccion }}</td>
+                    <td>
+                      <button class="btn btn-sm btn-warning me-1" (click)="editarSede(sede)">
+                        <i class="now-ui-icons ui-2_settings-90"></i>
+                      </button>
+                      <button class="btn btn-sm btn-danger" (click)="eliminarSede(sede.id)">
+                        <i class="now-ui-icons ui-1_simple-remove"></i>
+                      </button>
+                    </td>
                   </tr>
                 </tbody>
               </table>
@@ -45,6 +57,72 @@
             </div>
           </div>
         </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" #crearSedeModal tabindex="-1" aria-labelledby="crearSedeModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="crearSedeModalLabel">Crear Sede</h5>
+        <button type="button" class="btn-close" (click)="modalCrearInstance.hide()" aria-label="Cerrar"></button>
+      </div>
+      <div class="modal-body">
+        <form>
+          <div class="mb-3">
+            <label>Nombre</label>
+            <input type="text" class="form-control" [(ngModel)]="nuevoSede.nombre" name="crearNombre">
+          </div>
+          <div class="mb-3">
+            <label>Dirección</label>
+            <input type="text" class="form-control" [(ngModel)]="nuevoSede.direccion" name="crearDireccion">
+          </div>
+          <div class="mb-3">
+            <label>Teléfono</label>
+            <input type="text" class="form-control" [(ngModel)]="nuevoSede.telefono" name="crearTelefono">
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="modalCrearInstance.hide()">Cancelar</button>
+        <button type="button" class="btn btn-primary" (click)="crearSede()">Crear</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" #editarSedeModal tabindex="-1" aria-labelledby="editarSedeModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header bg-warning">
+        <h5 class="modal-title" id="editarSedeModalLabel">Editar Sede</h5>
+        <button type="button" class="btn-close" (click)="modalEditarInstance.hide()" aria-label="Cerrar"></button>
+      </div>
+      <div class="modal-body">
+        <form>
+          <div class="mb-3">
+            <label>ID</label>
+            <input type="text" class="form-control" [(ngModel)]="sedeForm.id" name="editarId" readonly>
+          </div>
+          <div class="mb-3">
+            <label>Nombre</label>
+            <input type="text" class="form-control" [(ngModel)]="sedeForm.nombre" name="editarNombre">
+          </div>
+          <div class="mb-3">
+            <label>Dirección</label>
+            <input type="text" class="form-control" [(ngModel)]="sedeForm.direccion" name="editarDireccion">
+          </div>
+          <div class="mb-3">
+            <label>Teléfono</label>
+            <input type="text" class="form-control" [(ngModel)]="sedeForm.telefono" name="editarTelefono">
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="modalEditarInstance.hide()">Cancelar</button>
+        <button type="button" class="btn btn-warning text-white" (click)="guardarCambios()">Guardar Cambios</button>
       </div>
     </div>
   </div>

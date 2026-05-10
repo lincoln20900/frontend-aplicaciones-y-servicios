@@ -33,9 +33,9 @@ export class DashboardComponent implements OnInit {
   public lineChartLabels: Array<any>;
   public lineChartColors: Array<any>
   
-  public totalventas: number = 0;
-  public totalUsuarios: number = 0;
-  public totalUsuario: any;
+  public totalMascotas: number = 0;
+  public totalUsuario: number = 0;
+  public popularRazas: Array<{ raza: string; cantidad: number }> = [];
   
   public lineChartWithNumbersAndGridType;
   public lineChartWithNumbersAndGridData: Array<any>;
@@ -52,10 +52,20 @@ export class DashboardComponent implements OnInit {
   constructor(private http: HttpClient, private cdRef: ChangeDetectorRef) { }
 
   ngOnInit() {
-    this. cargarTotales();
     this.chartColor = "#FFFFFF";
     this.canvas = document.getElementById("bigDashboardChart");
     this.ctx = this.canvas.getContext("2d");
+    
+    this.gradientStroke = this.ctx.createLinearGradient(500, 0, 100, 0);
+    this.gradientStroke.addColorStop(0, '#80b6f4');
+    this.gradientStroke.addColorStop(1, this.chartColor);
+    
+    this.gradientFill = this.ctx.createLinearGradient(0, 200, 0, 50);
+    this.gradientFill.addColorStop(0, "rgba(128, 182, 244, 0)");
+    this.gradientFill.addColorStop(1, "rgba(255, 255, 255, 0.24)");
+
+    this.setDefaultRazasChart();
+    this.cargarTotales();
     
     this.gradientStroke = this.ctx.createLinearGradient(500, 0, 100, 0);
     this.gradientStroke.addColorStop(0, '#80b6f4');
@@ -485,29 +495,84 @@ export class DashboardComponent implements OnInit {
   }
   cargarTotales() {
     // ✅ Obtener total de usuarios
-    this.http.get<any>(`${environment.apiUrl}/usuarios/total`).subscribe({
+    this.http.get<any>(`${environment.apiUrl}/usuarios`).subscribe({
       next: (data) => {
-        console.log("✅ Respuesta usuarios:", data);
-        this.totalUsuario = data.total_usuarios ?? 0;
-        this.cdRef.detectChanges(); // 🔄 Fuerza actualización de vista
+        const usuarios = Array.isArray(data) ? data : data?.usuarios ?? [];
+        this.totalUsuario = usuarios.length;
+        this.cdRef.detectChanges();
       },
       error: (err) => {
-        console.error('❌ Error al obtener total de usuarios:', err);
+        console.error('❌ Error al obtener usuarios:', err);
       }
     });
 
-    
-   
-    // ✅ OBTENER TOTAL DE VENTAS
-    this.http.get<any>(`${environment.apiUrl}/facturas/total-costos`).subscribe({
+    // ✅ Obtener total de mascotas y razas populares
+    this.http.get<any>(`${environment.apiUrl}/mascotas`).subscribe({
       next: (data) => {
-        this.totalventas = data.total_costos;
-        console.log('✅ Total de ventas:', this.totalventas);
+        const mascotas = Array.isArray(data) ? data : data?.mascotas ?? [];
+        this.totalMascotas = mascotas.length;
+        this.popularRazas = this.calcularRazasPopulares(mascotas);
+        this.actualizarGraficoRazas(mascotas);
+        console.log('✅ Total de mascotas:', this.totalMascotas, 'Razas populares:', this.popularRazas);
       },
       error: (err) => {
-        console.error('❌ Error al obtener total de ventas:', err);
+        console.error('❌ Error al obtener total de mascotas:', err);
       }
     });
-}
+  }
+
+  private calcularRazasPopulares(mascotas: any[]): Array<{ raza: string; cantidad: number }> {
+    if (!Array.isArray(mascotas) || mascotas.length === 0) {
+      return [];
+    }
+
+    const conteoRazas: { [raza: string]: number } = {};
+    mascotas.forEach((mascota) => {
+      const raza = mascota.raza?.trim() || 'Desconocida';
+      conteoRazas[raza] = (conteoRazas[raza] || 0) + 1;
+    });
+
+    return Object.keys(conteoRazas)
+      .map((raza) => ({ raza, cantidad: conteoRazas[raza] }))
+      .sort((a, b) => b.cantidad - a.cantidad)
+      .slice(0, 5);
+  }
+
+  private actualizarGraficoRazas(mascotas: any[]) {
+    if (!Array.isArray(mascotas) || mascotas.length === 0) {
+      this.setDefaultRazasChart();
+      return;
+    }
+
+    const ordenadas = this.calcularRazasPopulares(mascotas);
+    if (ordenadas.length === 0) {
+      this.setDefaultRazasChart();
+      return;
+    }
+
+    this.lineChartLabels = ordenadas.map((item) => item.raza);
+    this.lineChartData = [
+      {
+        label: 'Cantidad de mascotas por raza',
+        pointBorderWidth: 2,
+        pointHoverRadius: 4,
+        pointHoverBorderWidth: 1,
+        pointRadius: 4,
+        fill: true,
+        borderWidth: 2,
+        data: ordenadas.map((item) => item.cantidad)
+      }
+    ];
+    this.lineChartColors = [
+      {
+        borderColor: '#f96332',
+        pointBorderColor: '#FFF',
+        pointBackgroundColor: '#f96332',
+        backgroundColor: this.gradientFill || 'rgba(249,99,50,0.2)'
+      }
+    ];
+    this.lineChartOptions = this.gradientChartOptionsConfiguration;
+    this.lineChartType = 'line';
+  }
 }
 

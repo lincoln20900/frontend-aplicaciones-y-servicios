@@ -21,26 +21,22 @@ export interface UsuarioRead {
   id: number;
   email: string;
   rol: string;
+  cliente_id?: number | null;
+  veterinario_id?: number | null;
 }
 
 export interface UsuarioCreate {
   email: string;
-  nombre_completo: string;
-  nombre_usuario: string;
-  telefono: string | null;
   rol: string;
-  clave: string;
-  activo: boolean;
+  cliente_id?: number | null;
+  veterinario_id?: number | null;
 }
 
 export interface UsuarioUpdate {
   email?: string;
-  nombre_completo?: string;
-  nombre_usuario?: string;
-  telefono?: string | null;
   rol?: string;
-  clave?: string;
-  activo?: boolean;
+  cliente_id?: number | null;
+  veterinario_id?: number | null;
 }
 
 // ==================== CLIENTE ====================
@@ -67,26 +63,26 @@ export interface ClienteUpdate {
 export interface MascotaRead {
   id: number;
   nombre: string;
-  edad?: string;
-  genero_id?: string;
-  raza_id?: string;
-  usuario_id?: number;
+  especie?: string;
+  raza?: string;
+  fecha_nacimiento?: string;
+  cliente_id?: number;
 }
 
 export interface MascotaCreate {
   nombre: string;
-  edad?: string;
-  genero_id?: string | number;
-  raza_id?: string | number;
-  usuario_id?: string | number;
+  especie?: string;
+  raza?: string;
+  fecha_nacimiento?: string;
+  cliente_id?: number;
 }
 
 export interface MascotaUpdate {
   nombre?: string;
-  edad?: string;
-  genero_id?: string | number;
-  raza_id?: string | number;
-  usuario_id?: string | number;
+  especie?: string;
+  raza?: string;
+  fecha_nacimiento?: string;
+  cliente_id?: number;
 }
 
 // ==================== VETERINARIO ====================

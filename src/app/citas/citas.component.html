@@ -31,6 +31,7 @@
                     <th>ID Mascota</th>
                     <th>ID Vacuna</th>
                     <th>ID Veterinario</th>
+                    <th>Acciones</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -41,6 +42,14 @@
                     <td>{{ cita.mascota_id || 'N/A' }}</td>
                     <td>{{ cita.vacuna_id || 'N/A' }}</td>
                     <td>{{ cita.veterinario_id || 'N/A' }}</td>
+                    <td>
+                      <button class="btn btn-sm btn-warning me-1" (click)="editarCita(cita)">
+                        <i class="now-ui-icons ui-2_settings-90"></i>
+                      </button>
+                      <button class="btn btn-sm btn-danger" (click)="eliminarCita(cita.id)">
+                        <i class="now-ui-icons ui-1_simple-remove"></i>
+                      </button>
+                    </td>
                   </tr>
                 </tbody>
               </table>
@@ -149,31 +158,42 @@
             <input 
               type="text"
               class="form-control"
-              [(ngModel)]="citaForm.id_citas"
-              name="id_citas"
+              [(ngModel)]="citaForm.id"
+              name="id"
               readonly
             >
           </div>
 
-          <!-- ID Servicio -->
+          <!-- ID Mascota -->
           <div class="mb-3">
-            <label>ID Servicio</label>
+            <label>ID Mascota</label>
             <input 
               type="text"
               class="form-control"
-              [(ngModel)]="citaForm.id_servicio"
-              name="id_servicio"
+              [(ngModel)]="citaForm.mascota_id"
+              name="mascota_id"
             >
           </div>
 
-          <!-- ID Animal -->
+          <!-- ID Vacuna -->
           <div class="mb-3">
-            <label>ID Animal</label>
+            <label>ID Vacuna</label>
             <input 
               type="text"
               class="form-control"
-              [(ngModel)]="citaForm.id_animal"
-              name="id_animal"
+              [(ngModel)]="citaForm.vacuna_id"
+              name="vacuna_id"
+            >
+          </div>
+
+          <!-- ID Veterinario -->
+          <div class="mb-3">
+            <label>ID Veterinario</label>
+            <input 
+              type="text"
+              class="form-control"
+              [(ngModel)]="citaForm.veterinario_id"
+              name="veterinario_id"
             >
           </div>
 
@@ -183,19 +203,19 @@
             <input 
               type="datetime-local"
               class="form-control"
-              [(ngModel)]="citaForm.fecha_atencion"
-              name="fecha_atencion"
+              [(ngModel)]="citaForm.fecha"
+              name="fecha"
             >
           </div>
 
-          <!-- ID Usuario Edita -->
+          <!-- Estado -->
           <div class="mb-3">
-            <label>ID Usuario Edita</label>
+            <label>Estado</label>
             <input 
               type="text"
               class="form-control"
-              [(ngModel)]="citaForm.id_usuario_edita"
-              name="id_usuario_edita"
+              [(ngModel)]="citaForm.estado"
+              name="estado"
             >
           </div>
 

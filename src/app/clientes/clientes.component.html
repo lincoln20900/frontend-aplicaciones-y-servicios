@@ -3,8 +3,11 @@
     <div class="row">
       <div class="col-md-12">
         <div class="card">
-          <div class="card-header">
-            <h5 class="card-title">Listado de Clientes</h5>
+          <div class="card-header d-flex align-items-center justify-content-between">
+            <h5 class="card-title mb-0">Listado de Clientes</h5>
+            <button class="btn btn-primary" (click)="abrirModalCrear()">
+              <i class="now-ui-icons ui-1_simple-add"></i> Nuevo Cliente
+            </button>
           </div>
           <div class="card-body">
             <!-- Indicador de carga -->
@@ -27,6 +30,7 @@
                     <th>Teléfono</th>
                     <th>Dirección</th>
                     <th>Email</th>
+                    <th>Acciones</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -36,6 +40,14 @@
                     <td>{{ cliente.telefono }}</td>
                     <td>{{ cliente.direccion }}</td>
                     <td>{{ cliente.email }}</td>
+                    <td>
+                      <button class="btn btn-sm btn-warning me-1" (click)="editarCliente(cliente)">
+                        <i class="now-ui-icons ui-2_settings-90"></i>
+                      </button>
+                      <button class="btn btn-sm btn-danger" (click)="eliminarCliente(cliente.id)">
+                        <i class="now-ui-icons ui-1_simple-remove"></i>
+                      </button>
+                    </td>
                   </tr>
                 </tbody>
               </table>
@@ -47,6 +59,80 @@
             </div>
           </div>
         </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" #crearClienteModal tabindex="-1" aria-labelledby="crearClienteModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="crearClienteModalLabel">Crear Cliente</h5>
+        <button type="button" class="btn-close" (click)="modalCrearInstance.hide()" aria-label="Cerrar"></button>
+      </div>
+      <div class="modal-body">
+        <form>
+          <div class="mb-3">
+            <label>Nombre</label>
+            <input type="text" class="form-control" [(ngModel)]="nuevaCliente.nombre" name="crearNombre">
+          </div>
+          <div class="mb-3">
+            <label>Teléfono</label>
+            <input type="text" class="form-control" [(ngModel)]="nuevaCliente.telefono" name="crearTelefono">
+          </div>
+          <div class="mb-3">
+            <label>Dirección</label>
+            <input type="text" class="form-control" [(ngModel)]="nuevaCliente.direccion" name="crearDireccion">
+          </div>
+          <div class="mb-3">
+            <label>Email</label>
+            <input type="email" class="form-control" [(ngModel)]="nuevaCliente.email" name="crearEmail">
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="modalCrearInstance.hide()">Cancelar</button>
+        <button type="button" class="btn btn-primary" (click)="crearCliente()">Crear</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" #editarClienteModal tabindex="-1" aria-labelledby="editarClienteModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header bg-warning">
+        <h5 class="modal-title" id="editarClienteModalLabel">Editar Cliente</h5>
+        <button type="button" class="btn-close" (click)="modalEditarInstance.hide()" aria-label="Cerrar"></button>
+      </div>
+      <div class="modal-body">
+        <form>
+          <div class="mb-3">
+            <label>ID</label>
+            <input type="text" class="form-control" [(ngModel)]="clienteForm.id" name="clienteId" readonly>
+          </div>
+          <div class="mb-3">
+            <label>Nombre</label>
+            <input type="text" class="form-control" [(ngModel)]="clienteForm.nombre" name="clienteNombre">
+          </div>
+          <div class="mb-3">
+            <label>Teléfono</label>
+            <input type="text" class="form-control" [(ngModel)]="clienteForm.telefono" name="clienteTelefono">
+          </div>
+          <div class="mb-3">
+            <label>Dirección</label>
+            <input type="text" class="form-control" [(ngModel)]="clienteForm.direccion" name="clienteDireccion">
+          </div>
+          <div class="mb-3">
+            <label>Email</label>
+            <input type="email" class="form-control" [(ngModel)]="clienteForm.email" name="clienteEmail" readonly>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="modalEditarInstance.hide()">Cancelar</button>
+        <button type="button" class="btn btn-warning text-white" (click)="guardarCambios()">Guardar Cambios</button>
       </div>
     </div>
   </div>

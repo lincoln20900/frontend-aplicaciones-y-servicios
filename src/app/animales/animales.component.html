@@ -27,10 +27,10 @@
                   <tr>
                     <th>ID Animal</th>
                     <th>Nombre</th>
-                    <th>Edad</th>
-                    <th>Género</th>
+                    <th>Especie</th>
                     <th>Raza</th>
-                    <th>Propietario</th>
+                    <th>Fecha Nacimiento</th>
+                    <th>Cliente ID</th>
                     <th>Acciones</th>
                   </tr>
                 </thead>
@@ -38,10 +38,10 @@
                   <tr *ngFor="let animal of animales">
                     <td>{{ animal.id }}</td>
                     <td>{{ animal.nombre }}</td>
-                    <td>{{ animal.edad || 'N/A' }}</td>
-                    <td>{{ animal.genero_id || 'N/A' }}</td>
-                    <td>{{ animal.raza_id || 'N/A' }}</td>
-                    <td>{{ animal.usuario_id || 'N/A' }}</td>
+                    <td>{{ animal.especie || 'N/A' }}</td>
+                    <td>{{ animal.raza || 'N/A' }}</td>
+                    <td>{{ animal.fecha_nacimiento || 'N/A' }}</td>
+                    <td>{{ animal.cliente_id || 'N/A' }}</td>
                     <td>
                       <button class="btn btn-sm btn-warning" (click)="editarAnimal(animal)">
                         <i class="now-ui-icons ui-2_settings-90"></i>
@@ -80,20 +80,20 @@
             <input type="text" class="form-control" [(ngModel)]="nuevoAnimal.nombre" name="nombre">
           </div>
           <div class="mb-3">
-            <label>Edad</label>
-            <input type="text" class="form-control" [(ngModel)]="nuevoAnimal.edad" name="edad">
+            <label>Especie</label>
+            <input type="text" class="form-control" [(ngModel)]="nuevoAnimal.especie" name="especie">
           </div>
           <div class="mb-3">
-            <label>ID Género</label>
-            <input type="text" class="form-control" [(ngModel)]="nuevoAnimal.genero_id" name="genero_id">
+            <label>Raza</label>
+            <input type="text" class="form-control" [(ngModel)]="nuevoAnimal.raza" name="raza">
           </div>
           <div class="mb-3">
-            <label>ID Raza</label>
-            <input type="text" class="form-control" [(ngModel)]="nuevoAnimal.raza_id" name="raza_id">
+            <label>Fecha de Nacimiento</label>
+            <input type="date" class="form-control" [(ngModel)]="nuevoAnimal.fecha_nacimiento" name="fecha_nacimiento">
           </div>
           <div class="mb-3">
-            <label>ID Usuario</label>
-            <input type="text" class="form-control" [(ngModel)]="nuevoAnimal.usuario_id" name="usuario_id">
+            <label>Cliente ID</label>
+            <input type="number" class="form-control" [(ngModel)]="nuevoAnimal.cliente_id" name="cliente_id">
           </div>
         </form>
       </div>
@@ -125,20 +125,20 @@
             <input type="text" class="form-control" [(ngModel)]="animalForm.nombre" name="nombre">
           </div>
           <div class="mb-3">
-            <label>Edad</label>
-            <input type="text" class="form-control" [(ngModel)]="animalForm.edad" name="edad">
+            <label>Especie</label>
+            <input type="text" class="form-control" [(ngModel)]="animalForm.especie" name="especie">
           </div>
           <div class="mb-3">
-            <label>ID Género</label>
-            <input type="text" class="form-control" [(ngModel)]="animalForm.genero_id" name="genero_id">
+            <label>Raza</label>
+            <input type="text" class="form-control" [(ngModel)]="animalForm.raza" name="raza">
           </div>
           <div class="mb-3">
-            <label>ID Raza</label>
-            <input type="text" class="form-control" [(ngModel)]="animalForm.raza_id" name="raza_id">
+            <label>Fecha de Nacimiento</label>
+            <input type="date" class="form-control" [(ngModel)]="animalForm.fecha_nacimiento" name="fecha_nacimiento">
           </div>
           <div class="mb-3">
-            <label>ID Usuario</label>
-            <input type="text" class="form-control" [(ngModel)]="animalForm.usuario_id" name="usuario_id">
+            <label>Cliente ID</label>
+            <input type="number" class="form-control" [(ngModel)]="animalForm.cliente_id" name="cliente_id">
           </div>
         </form>
       </div>

@@ -2,7 +2,7 @@ import { Component, OnInit, ViewChild, ElementRef, AfterViewInit } from '@angula
 import { HttpClient } from '@angular/common/http';
 import Swal from 'sweetalert2';
 import { environment } from '../../environments/environment';
-import { CitaVacunacionRead } from '../models/api.models';
+import { CitaVacunacionRead, CitaVacunacionUpdate } from '../models/api.models';
 
 const apiUrl = environment.apiUrl + '/citas';
 declare const bootstrap: any;
@@ -22,8 +22,8 @@ export class CitasComponent implements OnInit, AfterViewInit {
   modalCrearInstance: any;
   modalEditarInstance: any;
 
-  @ViewChild('crearCitaModal') crearCitaModal: ElementRef;
-  @ViewChild('editarCitaModal') editarCitaModal: ElementRef;
+  @ViewChild('crearCitaModal') crearCitaModal!: ElementRef;
+  @ViewChild('editarCitaModal') editarCitaModal!: ElementRef;
 
   nuevaCita: any = {
     mascota_id: '',
@@ -33,11 +33,11 @@ export class CitasComponent implements OnInit, AfterViewInit {
     estado: 'programada'
   };
 
-  citaForm: any = {
-    id: '',
-    mascota_id: '',
-    vacuna_id: '',
-    veterinario_id: '',
+  citaForm: CitaVacunacionRead & { id?: number } = {
+    id: undefined,
+    mascota_id: 0,
+    vacuna_id: 0,
+    veterinario_id: 0,
     fecha: '',
     estado: ''
   };
@@ -110,13 +110,39 @@ export class CitasComponent implements OnInit, AfterViewInit {
 
   guardarCambios(): void {
     const url = `${apiUrl}/${this.citaForm.id}`;
-    this.http.put<any>(url, this.citaForm).subscribe({
+    const payload: CitaVacunacionUpdate = {
+      mascota_id: this.citaForm.mascota_id,
+      vacuna_id: this.citaForm.vacuna_id,
+      veterinario_id: this.citaForm.veterinario_id,
+      fecha: this.citaForm.fecha,
+      estado: this.citaForm.estado
+    };
+
+    this.http.put<any>(url, payload).subscribe({
       next: () => {
         this.obtenerCitas();
         this.cerrarModal();
         Swal.fire('Éxito', 'Cita actualizada correctamente', 'success');
       },
       error: () => Swal.fire('Error', 'No se pudo actualizar la cita', 'error')
+    });
+  }
+
+  eliminarCita(citaId?: number): void {
+    if (!citaId) {
+      return;
+    }
+
+    if (!confirm('¿Seguro que deseas eliminar esta cita?')) {
+      return;
+    }
+
+    this.http.delete<any>(`${apiUrl}/${citaId}`).subscribe({
+      next: () => {
+        Swal.fire('Eliminada', 'Cita eliminada correctamente', 'success');
+        this.obtenerCitas();
+      },
+      error: () => Swal.fire('Error', 'No se pudo eliminar la cita', 'error')
     });
   }
 }
