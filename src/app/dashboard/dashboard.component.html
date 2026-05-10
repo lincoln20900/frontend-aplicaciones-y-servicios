@@ -32,7 +32,7 @@
           </div>
         </div>
         <div class="card-body">
-          <div class="chart-area">
+          <div class="chart-area" *ngIf="popularRazas && popularRazas.length > 0; else noRazasData">
             <canvas baseChart id="lineChartExample"
                         [datasets]="lineChartData"
                         [labels]="lineChartLabels"
@@ -41,6 +41,18 @@
                         [chartType]="lineChartType"
                         (chartHover)="chartHovered($event)"
                         (chartClick)="chartClicked($event)"></canvas>
+          </div>
+          <ng-template #noRazasData>
+            <div class="text-center" style="padding: 40px 0; color: #777;">
+              No hay datos de razas disponibles.
+            </div>
+          </ng-template>
+          <div *ngIf="popularRazas && popularRazas.length > 0" class="mt-3">
+            <ul class="list-unstyled mb-0">
+              <li *ngFor="let raza of popularRazas">
+                <strong>{{ raza.raza }}</strong>: {{ raza.cantidad }}
+              </li>
+            </ul>
           </div>
         </div>
         <div class="card-footer">
@@ -53,17 +65,19 @@
     <div class="col-lg-4 col-md-6">
       <div class="card card-chart">
         <div class="card-header">
-          <h5 class="card-category">Gananacias</h5>
-          <h4 class="card-title">Total de ingresos</h4>
+          <h5 class="card-category">Mascotas</h5>
+          <h4 class="card-title">Total de mascotas</h4>
         </div>
-        <div class="chart-area text-center">
-          <h2 style="align-items: center ; color: #000;">
-            {{ totalventas || 0 | currency:'COP':'symbol-narrow' }}
-          </h2>
+        <div class="card-body">
+          <div class="chart-area text-center">
+            <h2 style="text-align:center; color: rgb(0, 0, 0);">
+              {{ totalMascotas }}
+            </h2>
+          </div>
         </div>
         <div class="card-footer">
           <div class="stats">
-            <i class="now-ui-icons arrows-1_refresh-69"></i> Just Updated
+            <i class="now-ui-icons ui-2_time-alarm"></i> Actualizado
           </div>
         </div>
       </div>
@@ -83,7 +97,7 @@
           </div>
         <div class="card-footer">
           <div class="stats">
-            <i class="now-ui-icons ui-2_time-alarm"></i> Last 7 days
+            <i class="now-ui-icons ui-2_time-alarm"></i> Actualizado
           </div>
         </div>
       </div>

@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import Swal from 'sweetalert2';
 import { environment } from '../../environments/environment';
 import { MascotaRead } from '../models/api.models';
+import { AuthService } from '../services/auth.service';
 
 const apiUrl = environment.apiUrl + '/mascotas';
 declare const bootstrap: any;
@@ -28,13 +29,13 @@ export class AnimalesComponent implements OnInit, AfterViewInit {
   // Nuevo animal form
   nuevoAnimal: any = {
     nombre: '',
-    edad: '',
-    genero_id: '',
-    raza_id: '',
-    usuario_id: ''
+    especie: '',
+    raza: '',
+    fecha_nacimiento: '',
+    cliente_id: ''
   };
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient, private authService: AuthService) { }
 
   ngOnInit(): void {
     this.obtenerAnimales();
@@ -80,20 +81,41 @@ export class AnimalesComponent implements OnInit, AfterViewInit {
 
   /** Crear Animal */
   crearAnimal(): void {
-    this.http.post<any>(apiUrl, this.nuevoAnimal).subscribe({
+    const clienteId = Number(this.nuevoAnimal.cliente_id);
+    if (!this.nuevoAnimal.nombre) {
+      Swal.fire('Error', 'El nombre de la mascota es obligatorio.', 'error');
+      return;
+    }
+    if (!clienteId || Number.isNaN(clienteId)) {
+      Swal.fire('Error', 'Cliente ID válido es obligatorio.', 'error');
+      return;
+    }
+
+    const payload = {
+      nombre: this.nuevoAnimal.nombre,
+      especie: this.nuevoAnimal.especie || null,
+      raza: this.nuevoAnimal.raza || null,
+      fecha_nacimiento: this.nuevoAnimal.fecha_nacimiento || null,
+      cliente_id: clienteId
+    };
+
+    this.http.post<any>(apiUrl, payload).subscribe({
       next: (res) => {
         this.animales.push(res);
         this.cerrarModal();
         this.nuevoAnimal = {
           nombre: '',
-          edad: '',
-          genero_id: '',
-          raza_id: '',
-          usuario_id: ''
+          especie: '',
+          raza: '',
+          fecha_nacimiento: '',
+          cliente_id: ''
         };
+        Swal.fire('Éxito', 'Mascota creada correctamente', 'success');
       },
-      error: () => {
-        alert('Error al crear el animal.');
+      error: (err) => {
+        console.error('Error al crear mascota:', err);
+        const message = err?.error?.detail || err?.error?.message || err?.message || 'Error al crear el animal.';
+        Swal.fire('Error', message, 'error');
       }
     });
   }
@@ -110,10 +132,10 @@ export class AnimalesComponent implements OnInit, AfterViewInit {
         console.log('✅ Respuesta del servidor:', response);
 
         if (response.exito) {
-          alert(`Animal eliminado correctamente.`);
+          Swal.fire('Eliminado', 'Mascota eliminada correctamente', 'success');
           this.obtenerAnimales();
         } else {
-          alert(`No se pudo eliminar el animal: ${response.mensaje}`);
+          Swal.fire('Error', `No se pudo eliminar el animal: ${response.mensaje}`, 'error');
         }
       },
       error: (err) => {
@@ -131,10 +153,10 @@ export class AnimalesComponent implements OnInit, AfterViewInit {
   animalForm: any = { 
     id: '',
     nombre: '', 
-    edad: '', 
-    genero_id: '', 
-    raza_id: '', 
-    usuario_id: '' 
+    especie: '', 
+    raza: '', 
+    fecha_nacimiento: '', 
+    cliente_id: '' 
   };
 
   // Abrir modal de edición
@@ -143,32 +165,43 @@ export class AnimalesComponent implements OnInit, AfterViewInit {
     this.animalForm = {
       id: animal.id,
       nombre: animal.nombre,
-      edad: animal.edad,
-      genero_id: animal.genero_id,
-      raza_id: animal.raza_id,
-      usuario_id: animal.usuario_id
+      especie: animal.especie,
+      raza: animal.raza,
+      fecha_nacimiento: animal.fecha_nacimiento,
+      cliente_id: animal.cliente_id
     };
     this.modalEditarInstance.show();
   }
   // Guardar cambios del animal editado
   guardarCambios(): void {
     const url = `${apiUrl}/${this.animalForm.id}`;
+    const clienteId = Number(this.animalForm.cliente_id);
+
+    if (!this.animalForm.nombre) {
+      Swal.fire('Error', 'El nombre de la mascota es obligatorio.', 'error');
+      return;
+    }
+    if (!clienteId || Number.isNaN(clienteId)) {
+      Swal.fire('Error', 'Cliente ID válido es obligatorio.', 'error');
+      return;
+    }
+
     const payload = {
       nombre: this.animalForm.nombre,
-      edad: this.animalForm.edad,
-      genero_id: this.animalForm.genero_id,
-      raza_id: this.animalForm.raza_id,
-      usuario_id: this.animalForm.usuario_id
+      especie: this.animalForm.especie || null,
+      raza: this.animalForm.raza || null,
+      fecha_nacimiento: this.animalForm.fecha_nacimiento || null,
+      cliente_id: clienteId
     };
 
-    console.log('📦 Payload que se enviará:', payload); 
+    console.log('📦 Payload que se enviará:', payload);
 
     this.http.put<any>(url, payload).subscribe({
       next: (response) => {
         this.obtenerAnimales();
         this.cerrarModal();
         this.modoEdicion = false;
-        Swal.fire('Éxito', 'Animal actualizado correctamente', 'success');
+        Swal.fire('Éxito', 'Mascota actualizada correctamente', 'success');
       },
       error: (err) => {
         console.error('Error al editar animal:', err);

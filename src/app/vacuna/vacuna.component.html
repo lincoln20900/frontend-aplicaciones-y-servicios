@@ -3,8 +3,11 @@
     <div class="row">
       <div class="col-md-12">
         <div class="card">
-          <div class="card-header">
-            <h5 class="card-title">Listado de Vacunas</h5>
+          <div class="card-header d-flex align-items-center justify-content-between">
+            <h5 class="card-title mb-0">Listado de Vacunas</h5>
+            <button class="btn btn-primary" (click)="abrirModalCrear()">
+              <i class="now-ui-icons ui-1_simple-add"></i> Nueva Vacuna
+            </button>
           </div>
           <div class="card-body">
             <!-- Indicador de carga -->
@@ -26,6 +29,7 @@
                     <th>Nombre</th>
                     <th>Fabricante</th>
                     <th>Dosis Requeridas</th>
+                    <th>Acciones</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -34,6 +38,14 @@
                     <td>{{ vacuna.nombre }}</td>
                     <td>{{ vacuna.fabricante }}</td>
                     <td>{{ vacuna.dosis_requeridas }}</td>
+                    <td>
+                      <button class="btn btn-sm btn-warning me-1" (click)="editarVacuna(vacuna)">
+                        <i class="now-ui-icons ui-2_settings-90"></i>
+                      </button>
+                      <button class="btn btn-sm btn-danger" (click)="eliminarVacuna(vacuna.id)">
+                        <i class="now-ui-icons ui-1_simple-remove"></i>
+                      </button>
+                    </td>
                   </tr>
                 </tbody>
               </table>
@@ -45,6 +57,72 @@
             </div>
           </div>
         </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" #crearVacunaModal tabindex="-1" aria-labelledby="crearVacunaModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="crearVacunaModalLabel">Crear Vacuna</h5>
+        <button type="button" class="btn-close" (click)="modalCrearInstance.hide()" aria-label="Cerrar"></button>
+      </div>
+      <div class="modal-body">
+        <form>
+          <div class="mb-3">
+            <label>Nombre</label>
+            <input type="text" class="form-control" [(ngModel)]="nuevaVacuna.nombre" name="crearNombre">
+          </div>
+          <div class="mb-3">
+            <label>Fabricante</label>
+            <input type="text" class="form-control" [(ngModel)]="nuevaVacuna.fabricante" name="crearFabricante">
+          </div>
+          <div class="mb-3">
+            <label>Dosis Requeridas</label>
+            <input type="number" class="form-control" [(ngModel)]="nuevaVacuna.dosis_requeridas" name="crearDosisRequeridas">
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="modalCrearInstance.hide()">Cancelar</button>
+        <button type="button" class="btn btn-primary" (click)="crearVacuna()">Crear</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" #editarVacunaModal tabindex="-1" aria-labelledby="editarVacunaModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header bg-warning">
+        <h5 class="modal-title" id="editarVacunaModalLabel">Editar Vacuna</h5>
+        <button type="button" class="btn-close" (click)="modalEditarInstance.hide()" aria-label="Cerrar"></button>
+      </div>
+      <div class="modal-body">
+        <form>
+          <div class="mb-3">
+            <label>ID</label>
+            <input type="text" class="form-control" [(ngModel)]="vacunaForm.id" name="editarId" readonly>
+          </div>
+          <div class="mb-3">
+            <label>Nombre</label>
+            <input type="text" class="form-control" [(ngModel)]="vacunaForm.nombre" name="editarNombre">
+          </div>
+          <div class="mb-3">
+            <label>Fabricante</label>
+            <input type="text" class="form-control" [(ngModel)]="vacunaForm.fabricante" name="editarFabricante">
+          </div>
+          <div class="mb-3">
+            <label>Dosis Requeridas</label>
+            <input type="number" class="form-control" [(ngModel)]="vacunaForm.dosis_requeridas" name="editarDosisRequeridas">
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="modalEditarInstance.hide()">Cancelar</button>
+        <button type="button" class="btn btn-warning text-white" (click)="guardarCambios()">Guardar Cambios</button>
       </div>
     </div>
   </div>

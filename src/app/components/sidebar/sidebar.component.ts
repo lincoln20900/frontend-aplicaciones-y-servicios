@@ -17,7 +17,7 @@ export const ROUTES: RouteInfo[] = [
     { path: '/clientes', title: 'Clientes',  icon:'business_badge', class: '', loading: false, showCount: true },
     { path: '/animales', title: 'Mascotas',  icon:'education_atom', class: '', loading: false, showCount: true },
     { path: '/sede', title: 'Sede',  icon:'ui-2_settings-90', class: '', loading: false, showCount: true },
-    { path: '/usuarios', title: 'Usuarios',  icon:'users_single-02', class: '', loading: false, showCount: false },
+    { path: '/usuarios', title: 'Usuarios',  icon:'users_single-02', class: '', loading: false, showCount: true },
     { path: '/vacuna', title: 'Vacuna',  icon:'health_ambulance', class: '', loading: false, showCount: true },
     { path: '/veterinario', title: 'Veterinario',  icon:'health_40', class: '', loading: false, showCount: true },
     { path: '/citas', title: 'Citas Vacunación',  icon:'ui-1_calendar-60', class: '', loading: false, showCount: true }
@@ -46,8 +46,8 @@ export class SidebarComponent implements OnInit {
     // Cargar datos de mascotas
     this.cargarDatos('animales', '/mascotas');
     
-    // No cargar contador para usuarios en el sidebar
-    // this.cargarDatos('usuarios', '/usuarios');
+    // Cargar datos de usuarios
+    this.cargarDatos('usuarios', '/usuarios');
     
     // Cargar datos de vacunas
     this.cargarDatos('vacuna', '/vacunas');
