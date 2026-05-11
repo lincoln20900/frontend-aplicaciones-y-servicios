@@ -1,4 +1,4 @@
-#LINK DEL VIDEO EXPLICATIVO DEL FRONTEND: https://youtu.be/i0cXPtFXBpw?si=YJgS-fWcVRFX3CNt
+#LINK DEL VIDEO EXPLICATIVO DEL FRONTEND (tercera y cuarta entrega): https://youtu.be/i0cXPtFXBpw?si=YJgS-fWcVRFX3CNt
 
 #LINK DEL BACKEND: https://github.com/dayanapiedrahita/Backend-Veterinaria.git
 
@@ -145,6 +145,16 @@ Now Ui Dashboard
 ├── tslint.json
 └── typings
 ```
+
+
+## Autores
+
+Juan Felipe Ospina Agudelo
+
+Lincon Andres Palacios
+
+video de la segunda entrega :
+https://youtu.be/4biNLPlJvhY
 
 ## Useful Links
 
