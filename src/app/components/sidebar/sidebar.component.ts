@@ -20,7 +20,8 @@ export const ROUTES: RouteInfo[] = [
     { path: '/usuarios', title: 'Usuarios',  icon:'users_single-02', class: '', loading: false, showCount: true },
     { path: '/vacuna', title: 'Vacuna',  icon:'health_ambulance', class: '', loading: false, showCount: true },
     { path: '/veterinario', title: 'Veterinario',  icon:'health_40', class: '', loading: false, showCount: true },
-    { path: '/citas', title: 'Citas Vacunación',  icon:'ui-1_calendar-60', class: '', loading: false, showCount: true }
+    { path: '/citas', title: 'Citas Vacunación',  icon:'ui-1_calendar-60', class: '', loading: false, showCount: true },
+    { path: '/factura', title: 'Factura', icon:'business_money-coins', class: '', loading: false, showCount: false }
 ];
 
 @Component({

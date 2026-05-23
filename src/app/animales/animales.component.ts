@@ -140,7 +140,8 @@ export class AnimalesComponent implements OnInit, AfterViewInit {
       },
       error: (err) => {
         console.error('❌ Error al eliminar el animal:', err);
-        alert('Error al eliminar el animal. Verifica la conexión con la API.');
+        const message = err?.error?.detail || err?.error?.message || err?.message || 'Error al eliminar el animal.';
+        Swal.fire('Error', message, 'error');
       }
     });
   }
@@ -205,7 +206,12 @@ export class AnimalesComponent implements OnInit, AfterViewInit {
       },
       error: (err) => {
         console.error('Error al editar animal:', err);
-        Swal.fire('Error', 'Error al editar el animal.', 'error');
+        const message = err?.error?.detail || err?.error?.message || err?.message || 'Error al editar el animal.';
+        if (err?.status === 401) {
+          Swal.fire('No autorizado', 'Tu sesión expiró o no tienes permisos. Por favor inicia sesión de nuevo.', 'warning');
+          return;
+        }
+        Swal.fire('Error', message, 'error');
       }
     });
   }
@@ -228,7 +234,8 @@ export class AnimalesComponent implements OnInit, AfterViewInit {
       },
       error: (err) => {
         console.error('Error al buscar animales por propietario:', err);
-        this.error = 'No se pudieron obtener los animales del propietario.';
+        const message = err?.error?.detail || err?.error?.message || err?.message || 'No se pudieron obtener los animales del propietario.';
+        this.error = message;
         this.loading = false;
       }
     });
